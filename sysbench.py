@@ -4,8 +4,9 @@ import re
 
 
 class Sysbench:
-    def __init__(self):
+    def __init__(self, return_full_output=False):
         self.num_threads = multiprocessing.cpu_count()
+        self.rfo = return_full_output
 
     def set_num_threads(self, num_threads):
         self.num_threads = num_threads
@@ -16,8 +17,10 @@ class Sysbench:
                 ["sysbench", "cpu", "--cpu-max-prime=" + str(cpu_max_prime),
                  "--threads=" + str(self.num_threads), "run"]))
         except Exception as e:
-            print(str(e))
-            return None
+            return e
+
+        if self.rfo:
+            return output
 
         regex_total_time = r"total time:[\s]*([0-9.]*)s"
         match_total_time = re.findall(regex_total_time, output, re.MULTILINE)
@@ -33,8 +36,10 @@ class Sysbench:
                                                   "--memory-total-size=" + str(mem_total_size),
                                                   "--threads=" + str(self.num_threads), "run"]))
         except Exception as e:
-            print(str(e))
-            return None
+            return e
+
+        if self.rfo:
+            return output
 
         regex_throughput = r"([0-9.]*) per second"
         match_throughput = re.findall(regex_throughput, output, re.MULTILINE)
@@ -49,8 +54,10 @@ class Sysbench:
             output = str(subprocess.check_output(["sysbench", "threads", "--max-time=" + str(max_time),
                                                   "--threads=" + str(num_threads), "run"]))
         except Exception as e:
-            print(str(e))
-            return None
+            return e
+
+        if self.rfo:
+            return output
 
         regex_avg_lat = r"avg:\s*([0-9.]*)"
         match_avg_lat = re.findall(regex_avg_lat, output, re.MULTILINE)
@@ -68,8 +75,10 @@ class Sysbench:
                                                   "--max-requests=" + str(max_requests), "run"]))
             subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size), "cleanup"])
         except Exception as e:
-            print(str(e))
-            return None
+            return e
+
+        if self.rfo:
+            return output
 
         regex_ops = r"reads/s:\s*([0-9.]*)\\n\s*writes/s:\s*([0-9.]*)\\n\s*fsyncs/s:\s*([0-9.]*)"
         match_ops = re.findall(regex_ops, output, re.MULTILINE)
