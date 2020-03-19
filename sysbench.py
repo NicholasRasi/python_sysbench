@@ -51,7 +51,7 @@ class Sysbench:
 
     def threads(self, max_time, num_threads):
         try:
-            output = str(subprocess.check_output(["sysbench", "threads", "--max-time=" + str(max_time),
+            output = str(subprocess.check_output(["sysbench", "threads", "--time=" + str(max_time),
                                                   "--threads=" + str(num_threads), "run"]))
         except Exception as e:
             return e
@@ -71,7 +71,7 @@ class Sysbench:
         try:
             subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size), "prepare"])
             output = str(subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size),
-                                                  "--file-test-mode=" + file_test_mode, "--max-time=" + str(max_time),
+                                                  "--file-test-mode=" + file_test_mode, "--time=" + str(max_time),
                                                   "--max-requests=" + str(max_requests), "run"]))
             subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size), "cleanup"])
         except Exception as e:
