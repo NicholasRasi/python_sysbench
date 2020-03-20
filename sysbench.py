@@ -13,9 +13,9 @@ class Sysbench:
 
     def cpu(self, cpu_max_prime):
         try:
-            output = str(subprocess.check_output(
+            output = subprocess.check_output(
                 ["sysbench", "cpu", "--cpu-max-prime=" + str(cpu_max_prime),
-                 "--threads=" + str(self.num_threads), "run"]))
+                 "--threads=" + str(self.num_threads), "run"]).decode("utf-8")
         except Exception as e:
             return e
 
@@ -32,9 +32,9 @@ class Sysbench:
 
     def memory(self, mem_block_size, mem_total_size):
         try:
-            output = str(subprocess.check_output(["sysbench", "memory", "--memory-block-size=" + str(mem_block_size),
-                                                  "--memory-total-size=" + str(mem_total_size),
-                                                  "--threads=" + str(self.num_threads), "run"]))
+            output = subprocess.check_output(["sysbench", "memory", "--memory-block-size=" + str(mem_block_size),
+                                              "--memory-total-size=" + str(mem_total_size),
+                                              "--threads=" + str(self.num_threads), "run"]).decode("utf-8")
         except Exception as e:
             return e
 
@@ -49,10 +49,10 @@ class Sysbench:
             throughput = match_throughput[0]
         return {"throughput [ops/s]": throughput}
 
-    def threads(self, max_time, num_threads):
+    def threads(self, threads_max_time, threads_num):
         try:
-            output = str(subprocess.check_output(["sysbench", "threads", "--time=" + str(max_time),
-                                                  "--threads=" + str(num_threads), "run"]))
+            output = subprocess.check_output(["sysbench", "threads", "--max-time=" + str(threads_max_time),
+                                              "--threads=" + str(threads_num), "run"]).decode("utf-8")
         except Exception as e:
             return e
 
@@ -67,12 +67,13 @@ class Sysbench:
             avg_lat = match_avg_lat[0]
         return {"avg_lat [ms]": avg_lat}
 
-    def fileio(self, file_total_size, file_test_mode, max_time, max_requests):
+    def fileio(self, file_total_size, file_test_mode, file_max_time, file_max_requests):
         try:
             subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size), "prepare"])
-            output = str(subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size),
-                                                  "--file-test-mode=" + file_test_mode, "--time=" + str(max_time),
-                                                  "--max-requests=" + str(max_requests), "run"]))
+            output = subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size),
+                                              "--file-test-mode=" + file_test_mode,
+                                              "--max-time=" + str(file_max_time),
+                                              "--max-requests=" + str(file_max_requests), "run"]).decode("utf-8")
             subprocess.check_output(["sysbench", "fileio", "--file-total-size=" + str(file_total_size), "cleanup"])
         except Exception as e:
             return e
